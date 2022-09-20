@@ -11,9 +11,10 @@ def standings(date, league='AL'):
         initialize_teamcodes()
     
     # unsorted list of tuples: teamcode, wins, losses
-    standings = []
-    for g in gamelog:
-        pass
+    # standings = []
+    # for g in gamelog:
+    #     pass
+    standings = [('BOS', 92, 70), ('DET', 91, 71), ('MIN', 91, 71)]
     return standings        
     
 def teamname(teamcode):

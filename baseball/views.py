@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from . import util
 
 # Create your views here.
 def index(request):
@@ -7,11 +8,8 @@ def index(request):
 from datetime import datetime
 def standings(request):
     date = request.GET["date"]
-    # if d is not valid, redirect to home page
-
-    # other, figure out the record of teams on given date
-    standings = []
+    # assumes date is valid
+    standings = util.standings(date, league='AL')
     date_object = datetime.strptime(date, '%Y-%m-%d').date()
     context = {"standings": standings, "date": date_object.strftime("%B %d, %Y")}
     return render(request, "baseball/standings.html", context)
-

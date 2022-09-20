@@ -1,0 +1,5 @@
+nav a.active:visited,
+nav a.active:visited {
+    color: blue;
+    border-color: blue
+}
