@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Play Ball!</title>
+    </head>
+    <body>
+        <p>Baseball is all about the standings.
+            What day and what league woud you like to know about in the 1967 season.</p>
+
+        <form action="{% url 'baseball:standings' %}" method="get">
+            <label for="dateid">Date to view:</label>
+            <input type="date" id="dateid" name="date" default="1967-07-04" min="1967-04-01" max="1967-10-15">
+            <input type="submit">
+        </form>
+
+    </body>
+</html>
