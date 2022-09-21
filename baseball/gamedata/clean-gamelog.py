@@ -27,5 +27,5 @@ def process_file(filename):
     print(f'Lines written: {N}')
 
 
-if __name__ == '__main__':
-    process_file("GL1967.TXT")
+
+python
