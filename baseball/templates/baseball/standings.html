@@ -1,13 +1,17 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Play Ball!</title>
-</head>
-<body>
-    <p>Here is the day in history...
-       {{ date }} 
-    </p>
-    <pre> {{ standings }} </pre>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <title>Play Ball!</title>
+    </head>
+    <body>
+        <p>Here is the day in history...
+            {{ date }}
+        </p>
+        <p>
+            {% for s in standings %}
+            {{s}}
+            {% endfor %}
+        </p>
+    </body>
 </html>
