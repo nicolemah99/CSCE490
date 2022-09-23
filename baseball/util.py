@@ -41,8 +41,7 @@ team_names = None
 # maps team code to team logo, e.g., "BOS" to "https://content.sportslogos.net/logos/53/53/thumbs/c0whfsa9j0vbs079opk2s05lx.gif"
 team_logos = None
 
-
-Record = namedtuple("Team", "code wins lossses")
+Record = namedtuple("Team", "code wins losses gb")
 Standings = list[Record]
 
 
@@ -50,6 +49,8 @@ def standings(date: date, league: str = 'AL') -> Standings:
     """ 
     Returns a list of team records for specified league as of a specified date.
     """
+    def gb(team, leader):
+        return ((wins[leader]-wins[team]) + (losses[team]-losses[leader]))/2
     initialize()
     wins = {}
     losses = {}
@@ -61,8 +62,9 @@ def standings(date: date, league: str = 'AL') -> Standings:
                 winner, loser = g.visitors, g.home
             wins.update({winner: wins.get(winner, 0) + 1})
             losses.update({loser: losses.get(loser, 0) + 1})
-    standings = [Record(team, wins[team], losses[team]) for team in wins]
-    return standings
+    leader = max(wins, key=lambda k:wins[k]/(wins[k]+losses[k]))
+    unsorted_standings = [Record(team, wins[team], losses[team], gb(team, leader)) for team in wins]
+    return sorted(unsorted_standings, key=lambda s:s.gb)
 
 
 def team_name(code):
@@ -81,6 +83,22 @@ def team_logo(code):
     return team_logos.get(code, "Unknown")
 
 
+def end_of_season():
+    """
+    Returns the date of the last game of the season
+    """
+    initialize()
+    return max(gamelog, key=lambda g: g.date).date
+
+
+def start_of_season():
+    """
+    Returns the date of the first game of the season
+    """
+    initialize()
+    return min(gamelog, key=lambda g: g.date).date
+
+
 def initialize():
     if not gamelog:
         initialize_team_names()
@@ -89,7 +107,7 @@ def initialize():
 
 
 def initialize_gamelog():
-    global gamelog
+    global gamelog, first_game, last_game
 
     gamelog = []
     with open(path(GAMELOG_FILENAME)) as incsvfile:
@@ -97,8 +115,7 @@ def initialize_gamelog():
         for row in reader:
             d = datetime.strptime(row[GAMELOG_DATE], "%Y%m%d").date()
             game = Game(d, row[GAMELOG_LEAGUE], row[GAMELOG_VISITING_TEAM],
-                        int(row[GAMELOG_VISITING_TEAM_SCORE]
-                            ), row[GAMELOG_HOME_TEAM],
+                        int(row[GAMELOG_VISITING_TEAM_SCORE]), row[GAMELOG_HOME_TEAM],
                         int(row[GAMELOG_HOME_TEAM_SCORE]))
             gamelog.append(game)
 

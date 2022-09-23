@@ -41,4 +41,8 @@ def oneteam(request, code):
     name = util.team_name(code)
     url = util.team_logo(code)
     return render(request, "baseball/oneteam.html",
-                  {"code": code, "name": name, "url": url})
+                  {"code": code, 
+                  "team_name": name, 
+                  "team_logo_url": url,
+                  "opening_day": util.start_of_season(),
+                  "last_day": util.end_of_season() })
