@@ -1,10 +1,8 @@
 import csv
-from mimetypes import init
 import os
 from collections import namedtuple
 from datetime import date, datetime
 
-from django.contrib.staticfiles.storage import staticfiles_storage
 
 # TODO: follow django best practices
 DIR = 'baseball/static/'
@@ -42,15 +40,16 @@ team_names = None
 team_logos = None
 
 Record = namedtuple("Team", "code wins losses gb")
+# list of teams records, first place to last place
 Standings = list[Record]
-
 
 def standings(date: date, league: str = 'AL') -> Standings:
     """ 
     Returns a list of team records for specified league as of a specified date.
+    The team are in sorted order, from 1st place to last place. 
     """
     def gb(team, leader):
-        return ((wins[leader]-wins[team]) + (losses[team]-losses[leader]))/2
+        return ((wins.get(leader, 0)-wins.get(team, 0)) + (losses.get(team, 0)-losses.get(leader, 0)))/2
     initialize()
     wins = {}
     losses = {}
@@ -62,9 +61,35 @@ def standings(date: date, league: str = 'AL') -> Standings:
                 winner, loser = g.visitors, g.home
             wins.update({winner: wins.get(winner, 0) + 1})
             losses.update({loser: losses.get(loser, 0) + 1})
-    leader = max(wins, key=lambda k:wins[k]/(wins[k]+losses[k]))
-    unsorted_standings = [Record(team, wins[team], losses[team], gb(team, leader)) for team in wins]
-    return sorted(unsorted_standings, key=lambda s:s.gb)
+    if len(wins)+len(losses) == 0:
+        return []
+    codes = set(wins.keys())
+    for k in losses.keys():
+        codes.add(k)
+    leader = max(wins, key=lambda k: wins.get(k, 0)/(wins.get(k, 0)+losses.get(k, 0)))
+    unsorted_standings = [Record(team, wins.get(team, 0), losses.get(team, 0), gb(team, leader)) for team in codes]
+    return sorted(unsorted_standings, key=lambda s: s.gb)
+
+
+ExtendedRecord = namedtuple("ExtendedRecord",
+                            "code name logo_url wins losses pct_str gb")
+
+def extend_record(r: Record) -> ExtendedRecord:
+    """"
+    Retunrs the ExtendedRecord version of the Record: converts code to team name, logo; formats winning pct. 
+    """
+    return ExtendedRecord(r.code, team_name(r.code), team_logo(r.code), r.wins, r.losses, format_pct(r.wins, r.losses), r.gb)
+
+
+def format_pct(wins, losses):
+    """
+    Returns winning percentage, nicely formatted (i.e., .ddd or 1.000)
+    """
+    pct = wins/(wins+losses) if wins + losses > 0 else 0
+    pct_str = f'{pct:0.3f}'
+    if pct_str[0] == '0':
+        pct_str = pct_str[1:]
+    return pct_str
 
 
 def team_name(code):
@@ -115,7 +140,8 @@ def initialize_gamelog():
         for row in reader:
             d = datetime.strptime(row[GAMELOG_DATE], "%Y%m%d").date()
             game = Game(d, row[GAMELOG_LEAGUE], row[GAMELOG_VISITING_TEAM],
-                        int(row[GAMELOG_VISITING_TEAM_SCORE]), row[GAMELOG_HOME_TEAM],
+                        int(row[GAMELOG_VISITING_TEAM_SCORE]
+                            ), row[GAMELOG_HOME_TEAM],
                         int(row[GAMELOG_HOME_TEAM_SCORE]))
             gamelog.append(game)
 
