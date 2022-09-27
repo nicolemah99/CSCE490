@@ -5,23 +5,46 @@
 {% block body %}
 <header>
     <h1>Baseball Standings for<br>{{ date }}</h1>
-    <a href="{% url 'baseball:index' %}">Choose Another Date</a>
+    <a href="{% url 'baseball:index' %}">Back to Home</a>
 </header>
 
 <main>
-    <section>
+    <div>
+        <form action="{% url 'baseball:standings' %}" method="get">
+            <label for="dateid">Choose a date:</label>
+            <input type="date" id="dateid" name="date" value="{{ curr_date }}" min="1967-04-10" max="1967-10-01"><br>
+            
+            <p>Choose a league:</p>
+            {% if league_requested == "NL" %}
+            <input type="radio" id="NL" name="league" value="NL" required checked>
+            <label style="display: inline;" for="NL">National League</label>
+            
+            <input type="radio" id="AL" name="league" value="AL" >
+            <label style="display: inline;" AL">American League</label><br>
 
-        {% if league == "NL" %}
+            {% else %}
+            <input type="radio" id="NL" name="league" value="NL" required>
+            <label style="display: inline;" for="NL">National League</label>
+            
+            <input type="radio" id="AL" name="league" value="AL" checked>
+            <label style="display: inline;" AL">American League</label><br>
+            {% endif %}
+            <input type="submit">
+        </form>
+    </div>
+    <div>
+
+        {% if league_requested == "NL" %}
             <h2>National League</h2>
-        {% elif league == "AL" %}
+        {% elif league_requested == "AL" %}
             <h2>American League</h2>
-        {% elif league == '' %}
+        {% elif league_requested == '' %}
             <h2>Both Leagues</h2>
         {% endif %}
-        
         {% if end_season %}
             <h2>Final Standings</h2>
         {% endif %}
+
             <table>
             <thead>
                 <tr>
@@ -34,24 +57,24 @@
             </thead>
             <tbody>
                 {% for s in standings %}
-                <tr>
-                    {% for l in logos %}
-                        {% if s.code == l.0 %}
-                            <th>{{l.1}}</th>
-                        {% endif %}
-                        {% if s.code == l.0 %}
-                           <td><img src='{{l.2}}'></td>
-                        {% endif %}
-                        {% endfor %}
-                    <td>{{s.wins}}</td>
-                    <td>{{s.losses}}</td>
-                    <td>{{s.gb}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                        <tr>
+                            {% for l in logos %}
+                                {% if s.code == l.0 %}
+                                    <th>{{l.1}}</th>
+                                {% endif %}
+                                {% if s.code == l.0 %}
+                                    <td><img src='{{l.2}}'></td>
+                                {% endif %}
+                                {% endfor %}
+                            <td>{{s.wins}}</td>
+                            <td>{{s.losses}}</td>
+                            <td>{{s.gb}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
         
         </table>
     
-    </section>
+    </div>
 </main>
 {% endblock %}

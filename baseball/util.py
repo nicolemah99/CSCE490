@@ -3,6 +3,10 @@ import os
 from collections import namedtuple
 from datetime import date, datetime
 
+league ={"BAL":"AL","BOS":"AL","CAL":"AL","CHA":"AL","CLE":"AL",
+        "DET":"AL","KC1":"AL","MIN":"AL","NYA":"AL","WS2":"AL",
+        "SLN":"NL","CHN":"NL","HOU":"NL","PHI":"NL","SFN":"NL",
+        "ATL":"NL","NYN":"NL","LAN":"NL","PIT":"NL","CIN":"NL",}
 
 # TODO: follow django best practices
 DIR = 'baseball/static/'
@@ -43,7 +47,7 @@ Record = namedtuple("Team", "code wins losses gb")
 # list of teams records, first place to last place
 Standings = list[Record]
 
-def standings(date: date, league: str = 'AL') -> Standings:
+def standings(date: date, league) -> Standings:
     """ 
     Returns a list of team records for specified league as of a specified date.
     The team are in sorted order, from 1st place to last place. 
@@ -90,7 +94,6 @@ def format_pct(wins, losses):
     if pct_str[0] == '0':
         pct_str = pct_str[1:]
     return pct_str
-
 
 def team_name(code):
     """ 
