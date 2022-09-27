@@ -1,18 +1,25 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Play Ball!</title>
-    </head>
-    <body>
-        <p>Baseball is all about the standings.
-            What day and what league woud you like to know about in the 1967 season.</p>
+{% extends "baseball/template.html" %}
 
-        <form action="{% url 'baseball:standings' %}" method="get">
-            <label for="dateid">Date to view:</label>
-            <input type="date" id="dateid" name="date" min="1967-04-01" max="1967-10-31">
-            <input type="submit">
-        </form>
+{% block title %}Play Ball!{% endblock %}
 
-    </body>
-</html>
+{% block body %}
+<h1>Baseball Standings by Date</h1>
+<p>Baseball is all about the standings.
+    What day and what league woud you like to know about in the 1967 season.</p>
+
+<form action="{% url 'baseball:standings' %}" method="get">
+    <label for="dateid">Choose a date:</label>
+    <input type="date" id="dateid" name="date" value="1967-04-10" min="1967-04-10" max="1967-10-01"><br>
+    
+    <p>Choose a league:</p>
+    <input type="radio" id="NL" name="league" value="NL" required>
+    <label style="display: inline;" for="NL">National League</label>
+    
+    <input type="radio" id="AL" name="league" value="AL" >
+    <label style="display: inline;" AL">American League</label><br>
+    <input type="submit">
+</form>
+
+
+{% endblock %}
+

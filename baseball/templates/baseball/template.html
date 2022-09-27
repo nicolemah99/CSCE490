@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    main {
+      margin: auto;
+    }
+    body {
+      margin: auto;
+      text-align: center;
+    }
+  </style>
+  <body>
+    {% block body %} {% endblock %}
+  </body>
+  <footer><p>Copyright 2022 by Nicole Mah.</p></footer>
+</html>

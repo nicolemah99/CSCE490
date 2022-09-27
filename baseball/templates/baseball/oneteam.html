@@ -1,16 +1,14 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>One Team Info</title>
-    </head>
-    <body>
-        Code: {{code}}
-        <br>
-        Name: {{ team_name }}
-        <br>
-        Logo: <img src="{{ team_logo_url }}">
-        <br>
-        Season began on {{ opening_day }} and ended on {{ last_day }}. 
-    </body>
-</html>
+{% extends "baseball/template.html" %}
+
+{% block title %}One Team Info{% endblock %}
+
+{% block body %}
+Code: {{code}}
+<br>
+Name: {{ team_name }}
+<br>
+Logo: <img src="{{ team_logo_url }}">
+<br>
+Season began on {{ opening_day }} and ended on {{ last_day }}. 
+
+{% endblock %}

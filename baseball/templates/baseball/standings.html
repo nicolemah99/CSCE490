@@ -1,17 +1,57 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Play Ball!</title>
-    </head>
-    <body>
-        <p>Here is the day in history...
-            {{ date }}
-        </p>
-        <p>
-            {% for s in standings %}
-            {{s}}<br>
-            {% endfor %}
-        </p>
-    </body>
-</html>
+{% extends "baseball/template.html" %}
+
+{% block title %}Baseball Standings{% endblock %}
+
+{% block body %}
+<header>
+    <h1>Baseball Standings for<br>{{ date }}</h1>
+    <a href="{% url 'baseball:index' %}">Choose Another Date</a>
+</header>
+
+<main>
+    <section>
+
+        {% if league == "NL" %}
+            <h2>National League</h2>
+        {% elif league == "AL" %}
+            <h2>American League</h2>
+        {% elif league == '' %}
+            <h2>Both Leagues</h2>
+        {% endif %}
+        
+        {% if end_season %}
+            <h2>Final Standings</h2>
+        {% endif %}
+            <table>
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Logo</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>GB</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in standings %}
+                <tr>
+                    {% for l in logos %}
+                        {% if s.code == l.0 %}
+                            <th>{{l.1}}</th>
+                        {% endif %}
+                        {% if s.code == l.0 %}
+                           <td><img src='{{l.2}}'></td>
+                        {% endif %}
+                        {% endfor %}
+                    <td>{{s.wins}}</td>
+                    <td>{{s.losses}}</td>
+                    <td>{{s.gb}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        
+        </table>
+    
+    </section>
+</main>
+{% endblock %}
